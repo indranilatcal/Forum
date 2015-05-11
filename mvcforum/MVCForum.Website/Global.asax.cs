@@ -113,6 +113,20 @@ namespace MVCForum.Website
 			
 			// Run scheduled tasks
 			ScheduledRunner.Run(unityContainer);
+			GlobalConfiguration.Configure(config =>
+					{
+						// Web API configuration and services
+						config.DependencyResolver = new UnityWebApiDependencyResolver(unityContainer);
+						// Web API routes
+						config.MapHttpAttributeRoutes();
+
+						config.Routes.MapHttpRoute(
+							name: "DefaultApi",
+							routeTemplate: "api/{controller}/{id}",
+							defaults: new { id = RouteParameter.Optional }
+						);
+					}
+				);
 			RegisterRoutes(RouteTable.Routes);
 
 			// Register Data annotations

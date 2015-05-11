@@ -15,6 +15,8 @@ using System.Net.Http;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Web.Security;
+using Main.Forum.Models;
+using System.Text;
 
 namespace Main.Controllers
 {
@@ -163,7 +165,8 @@ namespace Main.Controllers
 				if (result.Succeeded)
 				{
 					await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-					
+					await RegisterToForumAsync(model);
+					FormsAuthentication.SetAuthCookie(model.UserName, false);
 					// For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
 					// Send an email with this link
 					// string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -177,6 +180,28 @@ namespace Main.Controllers
 
 			// If we got this far, something failed, redisplay form
 			return View(model);
+		}
+
+		private async Task RegisterToForumAsync(RegisterViewModel model)
+		{
+			using (var apiClient = new HttpClient())
+			{
+				MemberAddModel forumModel = ConvertToForumModel(model);
+				var response = await apiClient.PostAsync("http://forum.example.com:81/api/Registration",
+					new StringContent(JsonConvert.SerializeObject(forumModel), Encoding.UTF8, "application/json"));
+				response.EnsureSuccessStatusCode();
+			}
+		}
+
+		private MemberAddModel ConvertToForumModel(RegisterViewModel model)
+		{
+			return new MemberAddModel
+			{
+				UserName = model.UserName,
+				Email = model.Email,
+				IsApproved = true,
+				Password = model.Password
+			};
 		}
 
 		//

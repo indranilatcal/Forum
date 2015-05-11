@@ -134,6 +134,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnityHelper.cs" />
+    <Compile Include="UnityWebApiDependencyResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

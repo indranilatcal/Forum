@@ -235,6 +235,7 @@
     <Compile Include="Application\ServiceFactory.cs" />
     <Compile Include="Application\WrappedJSonResult.cs" />
     <Compile Include="Application\SiteConstants.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
     <Compile Include="Areas\Admin\Controllers\AccountController.cs" />
     <Compile Include="Areas\Admin\Controllers\AdminController.cs" />
@@ -251,6 +252,7 @@
     <Compile Include="Areas\Admin\ViewModels\BatchViewModels.cs" />
     <Compile Include="Areas\Admin\ViewModels\BannedWordViewModels.cs" />
     <Compile Include="Areas\Admin\ViewModels\DashboardViewModels.cs" />
+    <Compile Include="Controllers\RegistrationController.cs" />
     <Compile Include="Controllers\BaseInstallController.cs" />
     <Compile Include="Controllers\BadgeController.cs" />
     <Compile Include="Areas\Admin\Controllers\BaseAdminController.cs" />
