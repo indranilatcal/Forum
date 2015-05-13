@@ -22,6 +22,8 @@ namespace Main.Forum.Models
 		public string SocialProfileImageUrl { get; set; }
 
 		public LoginType LoginType { get; set; }
+
+		public string[] Roles { get; set; }
 	}
 
 	public enum LoginType

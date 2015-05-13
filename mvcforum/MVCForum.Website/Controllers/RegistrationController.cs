@@ -18,6 +18,7 @@ using System.Web.Security;
 
 namespace MVCForum.Website.Controllers
 {
+	// Custom Code:
 	public class RegistrationController : ApiController
 	{
 		private readonly ISettingsService _settingsService;
@@ -27,10 +28,11 @@ namespace MVCForum.Website.Controllers
 		private readonly IBannedWordService _bannedWordService;
 		private readonly IMembershipService _membershipService;
 		private readonly ILoggingService _loggingService;
+		private readonly IRoleService _roleService;
 
 		public RegistrationController(ISettingsService settingsService, IUnitOfWorkManager unitOfWorkManager,
 			ILocalizationService localizationService, IBannedEmailService bannedEmailService, IBannedWordService bannedWordService,
-			IMembershipService membershipService, ILoggingService loggingService)
+			IMembershipService membershipService, ILoggingService loggingService, IRoleService roleService)
 		{
 			_settingsService = settingsService;
 			_unitOfWorkManager = unitOfWorkManager;
@@ -39,6 +41,7 @@ namespace MVCForum.Website.Controllers
 			_bannedWordService = bannedWordService;
 			_membershipService = membershipService;
 			_loggingService = loggingService;
+			_roleService = roleService;
 		}
 		public HttpResponseMessage Post(MemberAddViewModel userModel)
 		{
@@ -87,7 +90,7 @@ namespace MVCForum.Website.Controllers
 					Email = userModel.Email,
 					Password = userModel.Password,
 					IsApproved = userModel.IsApproved,
-					Comment = userModel.Comment,
+					Comment = userModel.Comment
 				};
 
 				var createStatus = _membershipService.CreateUser(userToSave);
@@ -143,6 +146,9 @@ namespace MVCForum.Website.Controllers
 						userToSave.GoogleAccessToken = userModel.UserAccessToken;
 					}
 
+					if (userModel.Roles != null && userModel.Roles.Any())
+						UpdateUserRoles(userToSave, userModel.Roles);
+
 					try
 					{
 						userToSave.IsApproved = userModel.IsApproved;
@@ -159,6 +165,39 @@ namespace MVCForum.Website.Controllers
 					}
 				}
 			}
+		}
+
+		private void UpdateUserRoles(MVCForum.Domain.DomainModel.MembershipUser user, IEnumerable<string> updatedRoles)
+		{
+			var updatedRolesSet = new List<MembershipRole>();
+			foreach (var roleStr in updatedRoles)
+			{
+				var alreadyIsRoleForUser = false;
+				foreach (var role in user.Roles)
+				{
+					if (roleStr == role.RoleName)
+					{
+						// This role for this user is UNchanged
+						updatedRolesSet.Add(role);
+						alreadyIsRoleForUser = true;
+						break;
+					}
+				}
+
+				if (!alreadyIsRoleForUser)
+				{
+					// This is a new role for this user
+					updatedRolesSet.Add(_roleService.GetRole(roleStr));
+				}
+			}
+
+			// Replace the roles in the user's collection
+			user.Roles.Clear();
+			foreach (var role in updatedRolesSet)
+			{
+				user.Roles.Add(role);
+			}
+
 		}
 	}
 }

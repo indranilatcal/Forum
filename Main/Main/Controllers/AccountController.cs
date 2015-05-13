@@ -200,7 +200,8 @@ namespace Main.Controllers
 				UserName = model.UserName,
 				Email = model.Email,
 				IsApproved = true,
-				Password = model.Password
+				Password = model.Password,
+				Roles = model.IsResponder ? new string[] { "Responder" } : new string[] { }
 			};
 		}
 
