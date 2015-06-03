@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Main.Forum.Models
 {
@@ -31,5 +28,11 @@ namespace Main.Forum.Models
 		Facebook,
 		Google,
 		Standard
+	}
+
+	public class MembershipUser
+	{
+		public Guid Id { get; set; }
+		public string UserName { get; set; }
 	}
 }

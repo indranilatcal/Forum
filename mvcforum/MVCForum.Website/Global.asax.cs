@@ -113,8 +113,10 @@ namespace MVCForum.Website
 			
 			// Run scheduled tasks
 			ScheduledRunner.Run(unityContainer);
+			// Custom Code:
 			GlobalConfiguration.Configure(config =>
 					{
+						config.Formatters.JsonFormatter.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
 						// Web API configuration and services
 						config.DependencyResolver = new UnityWebApiDependencyResolver(unityContainer);
 						// Web API routes

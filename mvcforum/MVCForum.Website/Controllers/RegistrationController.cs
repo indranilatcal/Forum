@@ -80,6 +80,25 @@ namespace MVCForum.Website.Controllers
 			return Request.CreateResponse(HttpStatusCode.OK);
 		}
 
+		public HttpResponseMessage Get(string id)
+		{
+			try
+			{
+				var user = _membershipService.GetUser(id);
+				if (user != null)
+					return Request.CreateResponse<MVCForum.Domain.DomainModel.MembershipUser>(user);
+				else
+					return Request.CreateResponse(HttpStatusCode.NotFound, string.Format(_localizationService.GetResourceString("Members.UserName.NotFound"), id));
+			}
+			catch (Exception ex)
+			{
+				_loggingService.Error(ex);
+				ModelState.AddModelError(string.Empty, _localizationService.GetResourceString("Errors.GenericMessage"));
+			}
+
+			return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+		}
+
 		private HttpResponseMessage MemberRegisterLogic(MemberAddViewModel userModel)
 		{
 			using (var unitOfWork = _unitOfWorkManager.NewUnitOfWork())

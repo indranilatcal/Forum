@@ -235,7 +235,6 @@
     <Compile Include="Application\ServiceFactory.cs" />
     <Compile Include="Application\WrappedJSonResult.cs" />
     <Compile Include="Application\SiteConstants.cs" />
-    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\Admin\AdminAreaRegistration.cs" />
     <Compile Include="Areas\Admin\Controllers\AccountController.cs" />
     <Compile Include="Areas\Admin\Controllers\AdminController.cs" />
@@ -1151,7 +1150,9 @@
     <Content Include="Views\Shared\customeditors\tinymceeditor.cshtml" />
     <Content Include="Views\Shared\_PrivateMessage.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="App_Start\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">
       <SubType>Designer</SubType>
