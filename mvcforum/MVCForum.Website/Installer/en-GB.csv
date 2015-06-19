@@ -335,4 +335,5 @@ StopWord.Error,You have tried to enter a word or url that is not allowed on this
 Post.Permalink,Permalink
 Members.Profile.LastOnline,Last Online
 Members.UnableToGetEmailAddress,Unable to gain access to your email address - please check your permissions
-Members.UserName.NotFound,Member with username {0} does not exist
+Members.UniversalId.NotFound,Member with UniversalId {0} does not exist
+Error.UniversalIdRegistration,UniversalId is mandatory for registration

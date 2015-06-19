@@ -170,7 +170,7 @@ namespace Main.Controllers
                 {
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 
-					//await _forumService.RegisterAsync(ConvertToForumModel(model));
+					await _forumService.RegisterAsync(ConvertToMember(model));
                     FormsAuthentication.SetAuthCookie(model.UserName, false);
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
@@ -192,13 +192,14 @@ namespace Main.Controllers
             var forumUser = await _forumService.GetUserAsync(model.UserName);
             if(forumUser == null)
             {
-
+				var user = UserManager.FindByName(model.UserName);
 				var memberModel = new MemberAddModel
 				{
 					UserName = model.UserName,
-					Email = UserManager.FindByName(model.UserName).Email,
+					Email = user.Email,
 					IsApproved = true,
 					Password = model.Password,
+					UniversalId = user.Id,
 					//Need to map responder somehow
 				};
 
@@ -208,12 +209,14 @@ namespace Main.Controllers
 
         private MemberAddModel ConvertToMember(RegisterViewModel model)
         {
+			var user = UserManager.FindByName(model.UserName);
             return new MemberAddModel
             {
                 UserName = model.UserName,
                 Email = model.Email,
                 IsApproved = true,
                 Password = model.Password,
+				UniversalId = user.Id,
                 Roles = model.IsResponder ? new string[] { "Responder" } : new string[] { }
             };
         }

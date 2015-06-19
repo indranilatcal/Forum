@@ -49,6 +49,12 @@ namespace MVCForum.Website.Controllers
 			{
 				using (_unitOfWorkManager.NewUnitOfWork())
 				{
+					//Custom Code: Check for presence of universal id
+					if(string.IsNullOrWhiteSpace(userModel.UniversalId))
+					{
+						ModelState.AddModelError(string.Empty, _localizationService.GetResourceString("Error.UniversalIdRegistration"));
+						return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
+					}
 					// First see if there is a spam question and if so, the answer matches
 					if (!string.IsNullOrEmpty(_settingsService.GetSettings().SpamQuestion))
 					{
@@ -84,11 +90,11 @@ namespace MVCForum.Website.Controllers
 		{
 			try
 			{
-				var user = _membershipService.GetUser(id);
+				var user = _membershipService.GetUserByUniversalId(id);
 				if (user != null)
 					return Request.CreateResponse<MVCForum.Domain.DomainModel.MembershipUser>(user);
 				else
-					return Request.CreateResponse(HttpStatusCode.NotFound, string.Format(_localizationService.GetResourceString("Members.UserName.NotFound"), id));
+					return Request.CreateResponse(HttpStatusCode.NotFound, string.Format(_localizationService.GetResourceString("Members.UniversalId.NotFound"), id));
 			}
 			catch (Exception ex)
 			{
@@ -109,7 +115,8 @@ namespace MVCForum.Website.Controllers
 					Email = userModel.Email,
 					Password = userModel.Password,
 					IsApproved = userModel.IsApproved,
-					Comment = userModel.Comment
+					Comment = userModel.Comment,
+					UniversalId = userModel.UniversalId
 				};
 
 				var createStatus = _membershipService.CreateUser(userToSave);

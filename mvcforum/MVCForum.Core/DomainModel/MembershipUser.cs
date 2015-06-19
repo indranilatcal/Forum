@@ -75,6 +75,8 @@ namespace MVCForum.Domain.DomainModel
 
         public string Latitude { get; set; }
         public string Longitude { get; set; }
+		// Custom Code:
+		public string UniversalId { get; set; }
 
         public virtual IList<MembershipRole> Roles { get; set; }
         public virtual IList<Post> Posts { get; set; }

@@ -28,6 +28,8 @@ namespace MVCForum.Domain.Interfaces.Services
         MembershipUser GetUserByTwitterId(string twitterId);
         MembershipUser GetUserByGoogleId(string googleId);
         MembershipUser GetUserByOpenIdToken(string openId);
+		//Custom Code:
+		MembershipUser GetUserByUniversalId(string universalId);
         IList<MembershipUser> GetUsersById(List<Guid> guids);
         IList<MembershipUser> GetUsersByDaysPostsPoints(int amoutOfDaysSinceRegistered, int amoutOfPosts);
         MembershipUser GetUser(Guid id);

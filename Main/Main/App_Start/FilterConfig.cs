@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using Main.Services;
+using System.Web;
 using System.Web.Mvc;
 
 namespace Main
@@ -12,9 +13,10 @@ namespace Main
 
 		public class LogErrorFilter : HandleErrorAttribute
 		{
+			private readonly ILogger _logger = new LogService();
 			public override void OnException(ExceptionContext filterContext)
 			{
-				base.OnException(filterContext);
+				_logger.Error("Error", filterContext.Exception);
 			}
 		}
 	}

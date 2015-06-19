@@ -11,6 +11,8 @@ namespace MVCForum.Domain.Interfaces.Repositories
         MembershipUser GetUserByTwitterId(string twitterId);
         MembershipUser GetUserByGoogleId(string googleId);
         MembershipUser GetUserByOpenIdToken(string openId);
+		//Custom Code:
+		MembershipUser GetUserByUniversalId(string universalId);
         IList<MembershipUser> SearchMembers(string username, int amount);
         IList<MembershipUser> GetActiveMembers();
         IList<MembershipUser> GetUsersByDaysPostsPoints(int amoutOfDaysSinceRegistered, int amoutOfPosts);

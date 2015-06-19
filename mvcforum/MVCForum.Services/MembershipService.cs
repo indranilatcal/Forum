@@ -455,6 +455,16 @@ namespace MVCForum.Services
             return _membershipRepository.GetUserByOpenIdToken(openId);
         }
 
+		/// <summary>
+		/// Get users by unversalId
+		/// </summary>
+		/// <param name="universalId"></param>
+		/// <returns></returns>
+		public MembershipUser GetUserByUniversalId(string universalId)
+		{
+			return _membershipRepository.GetUserByUniversalId(universalId);
+		}
+
         /// <summary>
         /// Get users from a list of Id's
         /// </summary>

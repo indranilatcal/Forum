@@ -58,6 +58,8 @@ namespace MVCForum.Website.ViewModels
 		public LoginType LoginType { get; set; }
 		// Custom Code:
 		public bool IsResponder { get; set; }
+		// Custom Code:
+		public string UniversalId { get; set; }
 	}
 
 	public class MemberFrontEndEditViewModel

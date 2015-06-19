@@ -68,6 +68,14 @@ namespace MVCForum.Data.Repositories
                 .FirstOrDefault(name => name.MiscAccessToken == openId);
         }
 
+		//Custom Code:
+		public MembershipUser GetUserByUniversalId(string universalId)
+		{
+			return _context.MembershipUser
+				.Include(x => x.Roles)
+				.FirstOrDefault(name => name.UniversalId == universalId);
+		}
+
         public IList<MembershipUser> SearchMembers(string username, int amount)
         {
             return _context.MembershipUser
