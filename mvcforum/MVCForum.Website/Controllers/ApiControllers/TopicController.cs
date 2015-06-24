@@ -7,7 +7,11 @@ using System.Web.Http;
 
 namespace MVCForum.Website.Controllers.ApiControllers
 {
-    public class TopicController : ApiController
-    {
-    }
+	public class TopicController : ApiController
+	{
+		public HttpResponseMessage Get(string id)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }
