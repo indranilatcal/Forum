@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Web.Http;
 using System.Net.Http;
 using MVCForum.Website.Controllers.ApiControllers;
+using MVCForum.Website;
 
 namespace MVCForum.Tests
 {
@@ -14,16 +15,8 @@ namespace MVCForum.Tests
 		public ApiRouteTest()
 		{
 			_config = new HttpConfiguration();
-			InitializeRoutes();
-		}
-
-		private void InitializeRoutes()
-		{
-			_config.Routes.MapHttpRoute(
-				name: "DefaultApi",
-				routeTemplate: "api/{controller}/{id}",
-				defaults: new { id = RouteParameter.Optional }
-				);
+			WebApiConfig.RegisterRoutes(_config);
+			_config.EnsureInitialized();
 		}
 
 		[TestMethod]

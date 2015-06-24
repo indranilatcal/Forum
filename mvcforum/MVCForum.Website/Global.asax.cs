@@ -94,15 +94,6 @@ namespace MVCForum.Website
 
 		}
 
-		public static void RegisterWebApi(HttpConfiguration config)
-		{
-			config.Routes.MapHttpRoute(
-				name: "DefaultApi",
-				routeTemplate: "api/{controller}/{id}",
-				defaults: new { id = RouteParameter.Optional }
-				);
-		}
-
 		protected void Application_Start()
 		{
 			// Register routes
@@ -120,13 +111,7 @@ namespace MVCForum.Website
 						// Web API configuration and services
 						config.DependencyResolver = new UnityWebApiDependencyResolver(unityContainer);
 						// Web API routes
-						config.MapHttpAttributeRoutes();
-
-						config.Routes.MapHttpRoute(
-							name: "DefaultApi",
-							routeTemplate: "api/{controller}/{id}",
-							defaults: new { id = RouteParameter.Optional }
-						);
+						WebApiConfig.RegisterRoutes(config);
 					}
 				);
 			RegisterRoutes(RouteTable.Routes);
