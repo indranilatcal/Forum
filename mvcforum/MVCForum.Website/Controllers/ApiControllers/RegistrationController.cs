@@ -16,7 +16,7 @@ using System.Web.Hosting;
 using System.Web.Http;
 using System.Web.Security;
 
-namespace MVCForum.Website.Controllers
+namespace MVCForum.Website.Controllers.ApiControllers
 {
 	// Custom Code:
 	public class RegistrationController : ApiController
