@@ -189,10 +189,10 @@ namespace Main.Controllers
 
         private async Task LoginToForumAsync(LoginViewModel model)
         {
-            var forumUser = await _forumService.GetUserAsync(model.UserName);
+			var user = UserManager.FindByName(model.UserName);
+            var forumUser = await _forumService.GetUserAsync(user.Id);
             if(forumUser == null)
             {
-				var user = UserManager.FindByName(model.UserName);
 				var memberModel = new MemberAddModel
 				{
 					UserName = model.UserName,

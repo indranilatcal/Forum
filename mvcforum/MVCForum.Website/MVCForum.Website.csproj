@@ -252,7 +252,7 @@
     <Compile Include="Areas\Admin\ViewModels\BatchViewModels.cs" />
     <Compile Include="Areas\Admin\ViewModels\BannedWordViewModels.cs" />
     <Compile Include="Areas\Admin\ViewModels\DashboardViewModels.cs" />
-    <Compile Include="Controllers\ApiControllers\TopicController.cs" />
+    <Compile Include="Controllers\ApiControllers\MembersController.cs" />
     <Compile Include="Controllers\ApiControllers\RegistrationController.cs" />
     <Compile Include="Controllers\BaseInstallController.cs" />
     <Compile Include="Controllers\BadgeController.cs" />

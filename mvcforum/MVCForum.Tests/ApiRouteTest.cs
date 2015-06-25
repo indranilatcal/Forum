@@ -20,12 +20,12 @@ namespace MVCForum.Tests
 		}
 
 		[TestMethod]
-		public void TopicGetByIdRouteIsCorrect()
+		public void TopicsPostedInGetByIdRouteIsCorrect()
 		{
-			var req = new HttpRequestMessage(HttpMethod.Get, "http://localhost/api/Topic/blah");
+			var req = new HttpRequestMessage(HttpMethod.Get, "http://localhost/api/Members/blah/TopicsPostedIn");
 			var routeTester = new RouteTester(_config, req);
-			Assert.AreEqual(typeof(TopicController), routeTester.GetControllerType());
-			Assert.AreEqual(ReflectionHelper.GetMethodName((TopicController t) => t.Get(string.Empty)), routeTester.ActionName);
+			Assert.AreEqual(typeof(MembersController), routeTester.GetControllerType());
+			Assert.AreEqual(ReflectionHelper.GetMethodName((MembersController t) => t.GetTopicsPostedIn("ignored")), routeTester.ActionName);
 		}
 	}
 }
