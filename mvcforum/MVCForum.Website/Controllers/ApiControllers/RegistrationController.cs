@@ -13,56 +13,52 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Hosting;
-using System.Web.Http;
 using System.Web.Security;
 
 namespace MVCForum.Website.Controllers.ApiControllers
 {
 	// Custom Code:
-	public class RegistrationController : ApiController
+	public class RegistrationController : BaseApiController
 	{
-		private readonly ISettingsService _settingsService;
-		private readonly IUnitOfWorkManager _unitOfWorkManager;
-		private readonly ILocalizationService _localizationService;
 		private readonly IBannedEmailService _bannedEmailService;
 		private readonly IBannedWordService _bannedWordService;
 		private readonly IMembershipService _membershipService;
-		private readonly ILoggingService _loggingService;
-		private readonly IRoleService _roleService;
 
-		public RegistrationController(ISettingsService settingsService, IUnitOfWorkManager unitOfWorkManager,
-			ILocalizationService localizationService, IBannedEmailService bannedEmailService, IBannedWordService bannedWordService,
-			IMembershipService membershipService, ILoggingService loggingService, IRoleService roleService)
+		public RegistrationController(
+			ISettingsService settingsService,
+			IUnitOfWorkManager unitOfWorkManager,
+			ILocalizationService localizationService,
+			IBannedEmailService bannedEmailService,
+			IBannedWordService bannedWordService,
+			IMembershipService membershipService,
+			ILoggingService loggingService,
+			IRoleService roleService)
+			: base(settingsService, loggingService, localizationService, roleService, unitOfWorkManager)
 		{
-			_settingsService = settingsService;
-			_unitOfWorkManager = unitOfWorkManager;
-			_localizationService = localizationService;
 			_bannedEmailService = bannedEmailService;
 			_bannedWordService = bannedWordService;
 			_membershipService = membershipService;
-			_loggingService = loggingService;
-			_roleService = roleService;
 		}
 		public HttpResponseMessage Post(MemberAddViewModel userModel)
 		{
-			if (_settingsService.GetSettings().SuspendRegistration != true)
+			if (SettingsService.GetSettings().SuspendRegistration != true)
 			{
-				using (_unitOfWorkManager.NewUnitOfWork())
+				using (UnitOfWorkManager.NewUnitOfWork())
 				{
 					//Custom Code: Check for presence of universal id
 					if(string.IsNullOrWhiteSpace(userModel.UniversalId))
 					{
-						ModelState.AddModelError(string.Empty, _localizationService.GetResourceString("Error.UniversalIdRegistration"));
+						ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Error.UniversalIdRegistration"));
 						return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
 					}
 					// First see if there is a spam question and if so, the answer matches
-					if (!string.IsNullOrEmpty(_settingsService.GetSettings().SpamQuestion))
+					if (!string.IsNullOrEmpty(SettingsService.GetSettings().SpamQuestion))
 					{
 						// There is a spam question, if answer is wrong return with error
-						if (userModel.SpamAnswer == null || userModel.SpamAnswer.Trim() != _settingsService.GetSettings().SpamAnswer)
+						if (userModel.SpamAnswer == null || userModel.SpamAnswer.Trim() != SettingsService.GetSettings().SpamAnswer)
 						{
 							// POTENTIAL SPAMMER!
-							ModelState.AddModelError(string.Empty, _localizationService.GetResourceString("Error.WrongAnswerRegistration"));
+							ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Error.WrongAnswerRegistration"));
 							return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
 						}
 					}
@@ -70,7 +66,7 @@ namespace MVCForum.Website.Controllers.ApiControllers
 					// Secondly see if the email is banned
 					if (_bannedEmailService.EmailIsBanned(userModel.Email))
 					{
-						ModelState.AddModelError(string.Empty, _localizationService.GetResourceString("Error.EmailIsBanned"));
+						ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Error.EmailIsBanned"));
 						return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
 					}
 				}
@@ -94,12 +90,12 @@ namespace MVCForum.Website.Controllers.ApiControllers
 				if (user != null)
 					return Request.CreateResponse<MVCForum.Domain.DomainModel.MembershipUser>(user);
 				else
-					return Request.CreateResponse(HttpStatusCode.NotFound, string.Format(_localizationService.GetResourceString("Members.UniversalId.NotFound"), id));
+					return Request.CreateResponse(HttpStatusCode.NotFound, string.Format(LocalizationService.GetResourceString("Members.UniversalId.NotFound"), id));
 			}
 			catch (Exception ex)
 			{
-				_loggingService.Error(ex);
-				ModelState.AddModelError(string.Empty, _localizationService.GetResourceString("Errors.GenericMessage"));
+				LoggingService.Error(ex);
+				ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Errors.GenericMessage"));
 			}
 
 			return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
@@ -107,7 +103,7 @@ namespace MVCForum.Website.Controllers.ApiControllers
 
 		private HttpResponseMessage MemberRegisterLogic(MemberAddViewModel userModel)
 		{
-			using (var unitOfWork = _unitOfWorkManager.NewUnitOfWork())
+			using (var unitOfWork = UnitOfWorkManager.NewUnitOfWork())
 			{
 				var userToSave = new MVCForum.Domain.DomainModel.MembershipUser
 				{
@@ -151,7 +147,7 @@ namespace MVCForum.Website.Controllers.ApiControllers
 							HttpPostedFileBase formattedImage = new MemoryFile(stream, "image/jpeg", fileName);
 
 							// Upload the file
-							var uploadResult = AppHelpers.UploadFile(formattedImage, uploadFolderPath, _localizationService);
+							var uploadResult = AppHelpers.UploadFile(formattedImage, uploadFolderPath, LocalizationService);
 
 							// Don't throw error if problem saving avatar, just don't save it.
 							if (uploadResult.UploadSuccessful)
@@ -184,9 +180,9 @@ namespace MVCForum.Website.Controllers.ApiControllers
 					catch (Exception ex)
 					{
 						unitOfWork.Rollback();
-						_loggingService.Error(ex);
+						LoggingService.Error(ex);
 						FormsAuthentication.SignOut();
-						ModelState.AddModelError(string.Empty, _localizationService.GetResourceString("Errors.GenericMessage"));
+						ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Errors.GenericMessage"));
 						return Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState);
 					}
 				}
@@ -213,7 +209,7 @@ namespace MVCForum.Website.Controllers.ApiControllers
 				if (!alreadyIsRoleForUser)
 				{
 					// This is a new role for this user
-					updatedRolesSet.Add(_roleService.GetRole(roleStr));
+					updatedRolesSet.Add(RoleService.GetRole(roleStr));
 				}
 			}
 

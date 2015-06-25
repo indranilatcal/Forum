@@ -1,27 +1,20 @@
-﻿using MVCForum.Domain.Interfaces.Services;
+﻿// Custom Code:
+using MVCForum.Domain.Interfaces.Services;
 using MVCForum.Domain.Interfaces.UnitOfWork;
 using MVCForum.Website.Application;
 using MVCForum.Website.ViewModels;
 using MVCForum.Website.ViewModels.Mapping;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 
 namespace MVCForum.Website.Controllers.ApiControllers
 {
 	[RoutePrefix("api/Members")]
-	public class MembersController : ApiController
+	public class MembersController : BaseApiController
 	{
-		private readonly IUnitOfWorkManager _unitOfWorkManager;
 		private readonly ITopicService _topicService;
-		private readonly ISettingsService _settingsService;
-		private readonly IRoleService _roleService;
 		private readonly IMembershipService _membershipService;
-		private readonly ILoggingService _loggingService;
-		private readonly ILocalizationService _localizationService;
 
 		public MembersController(
 			IUnitOfWorkManager unitOfWorkManager,
@@ -31,14 +24,10 @@ namespace MVCForum.Website.Controllers.ApiControllers
 			IMembershipService membershipService,
 			ILoggingService loggingService,
 			ILocalizationService localizationService)
+			: base(settingsService, loggingService, localizationService, roleService, unitOfWorkManager)
 		{
-			_unitOfWorkManager = unitOfWorkManager;
 			_topicService = topicService;
-			_settingsService = settingsService;
-			_roleService = roleService;
 			_membershipService = membershipService;
-			_loggingService = loggingService;
-			_localizationService = localizationService;
 		}
 
 		[Route("{id}/TopicsPostedIn")]
@@ -53,13 +42,13 @@ namespace MVCForum.Website.Controllers.ApiControllers
 
 				// Get the topics
 				var topics = _topicService.GetMembersActivity(pageIndex,
-								_settingsService.GetSettings().TopicsPerPage,
+								SettingsService.GetSettings().TopicsPerPage,
 								SiteConstants.MembersActivityListSize,
 								user.Id);
 
 				// Get the Topic View Models
 				var topicViewModels = ViewModelMapping.CreateTopicViewModels(topics,
-					_roleService, user.Roles.FirstOrDefault(), user, _settingsService.GetSettings());
+					RoleService, user.Roles.FirstOrDefault(), user, SettingsService.GetSettings());
 
 				// create the view model
 				var viewModel = new PostedInViewModel
@@ -74,8 +63,8 @@ namespace MVCForum.Website.Controllers.ApiControllers
 			}
 			catch (Exception ex)
 			{
-				_loggingService.Error(ex);
-				ModelState.AddModelError(string.Empty, _localizationService.GetResourceString("Errors.GenericMessage"));
+				LoggingService.Error(ex);
+				ModelState.AddModelError(string.Empty, LocalizationService.GetResourceString("Errors.GenericMessage"));
 			}
 
 			return BadRequest(ModelState);

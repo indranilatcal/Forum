@@ -220,6 +220,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <Compile Include="DomainModel\PermissionSet.Json.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
